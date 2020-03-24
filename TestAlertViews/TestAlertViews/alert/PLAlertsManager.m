@@ -41,6 +41,15 @@
 
 - (void)changeSuspendState:(NSNotification *)notification
 {
+    PLAlertItem *item = notification.object;
+    if(item && [item isKindOfClass:[PLAlertItem class]]){
+        NSMutableArray *arr = [item.dependencies mutableCopy];
+        for (id obj in arr) {
+            [item removeDependency:obj];
+        }
+        arr = nil;
+    }
+    
     NSLog(@"%lld,%lld",self.queue.progress.totalUnitCount,self.queue.progress.completedUnitCount);
     if(self.queue.progress.totalUnitCount == self.queue.progress.completedUnitCount){
         if(self.FinishCallback){
@@ -48,12 +57,14 @@
         }
         NSLog(@"calling:%s",__PRETTY_FUNCTION__);
     }
-    BOOL isSuspend = [notification.object boolValue];
+    BOOL isSuspend = [notification.userInfo[@"isSuspend"] boolValue];
     self.isSuspended = isSuspend;
 }
 
 - (void)addAlerts:(PLAlertModel *)model
 {
+    self.queue.progress.totalUnitCount = self.queue.progress.totalUnitCount + 1;
+    
     PLAlertItem *item = [[PLAlertItem alloc] initWithModel:model];
     if(self.last != nil){
         [item addDependency:self.last];
@@ -61,8 +72,6 @@
     
     [self.queue addOperation:item];
     self.last = item;
-    
-    self.queue.progress.totalUnitCount = self.queue.progress.totalUnitCount + 1;
     
     self.isSuspended = YES;
 }

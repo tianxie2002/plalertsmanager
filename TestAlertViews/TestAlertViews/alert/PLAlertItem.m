@@ -29,7 +29,8 @@
 
 - (void)main
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"k_changeSuspendState" object:@"1"];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"k_changeSuspendState" object:self userInfo:@{@"isSuspend":@"1"}];
 
     if([NSThread isMainThread]){
         [self doSth];
