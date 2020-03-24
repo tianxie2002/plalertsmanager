@@ -45,7 +45,8 @@
     } completion:^(BOOL finished) {
         if(finished){
             [self removeFromSuperview];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"k_changeSuspendState" object:@"0"];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"k_changeSuspendState" object:self userInfo:@{@"isSuspend":@"0"}];
+            
         }
     }];
 }
